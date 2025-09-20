@@ -1,0 +1,62 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-reverse-proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - pixel-pythons
+      - portfolio
+      - investec
+      - ollama
+      - nuke
+      - strava-bot
+    restart: unless-stopped
+
+  pixel-pythons:
+    build: ../pixel-pythons
+    container_name: pixel-pythons-app
+    expose:
+      - "3001"
+    restart: unless-stopped
+
+  portfolio:
+    build: ../portfolio
+    container_name: portfolio-app
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  investec:
+    build: ../investec-transaction-buckets
+    container_name: investec-app
+    env_file: ../investec-transaction-buckets/.env
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-app
+    expose:
+      - "11434"
+    restart: unless-stopped
+
+  nuke:
+    build: ../btc-transaction-nuke
+    container_name: nuke-app
+    env_file: ../btc-transaction-nuke/.env
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  strava-bot:
+    build: ../strava-bot-rust
+    container_name: strava-bot
+    env_file: ../strava-bot-rust/.env
+    expose:
+      - "8081"
+    restart: unless-stopped
