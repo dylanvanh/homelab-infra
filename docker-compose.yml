@@ -66,6 +66,9 @@ services:
     container_name: dozzle-app
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./dozzle/data:/data
     ports:
       - "9999:8080"
+    environment:
+      - DOZZLE_AUTH_PROVIDER=simple
     restart: unless-stopped

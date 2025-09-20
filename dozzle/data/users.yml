@@ -1,0 +1,6 @@
+users:
+  # "admin" here is username
+  admin:
+    name: Admin
+    # BCRYPT HASH (wont start otherwise)
+    password: REPLACE_ME_WITH_BCRPT_HASHED_PASSWORD
