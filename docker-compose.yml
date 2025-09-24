@@ -72,3 +72,11 @@ services:
     environment:
       - DOZZLE_AUTH_PROVIDER=simple
     restart: unless-stopped
+
+  hevy-progressive-overloader:
+    build: ../hevy-progressive-overloader
+    container_name: hevy-progressive-overloader-app
+    env_file: ../hevy-progressive-overloader/.env
+    expose:
+      - "3005"
+    restart: unless-stopped
