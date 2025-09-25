@@ -14,6 +14,7 @@ services:
       - ollama
       - nuke
       - strava-bot
+      - hevy-progressive-overloader
     restart: unless-stopped
 
   pixel-pythons:
