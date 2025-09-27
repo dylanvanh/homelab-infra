@@ -11,3 +11,9 @@ docker exec nginx-reverse-proxy nginx -s reload
 ```bash
 docker compose up -d --build nginx
 ```
+
+## get randomly generated pihole password
+
+```bash
+docker logs pihole | grep random
+```
