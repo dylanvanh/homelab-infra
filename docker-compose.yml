@@ -100,3 +100,15 @@ services:
       FTLCONF_dns_upstreams: '1.1.1.1;8.8.8.8'
       FTLCONF_webserver_api_password: "${PIHOLE_PASSWORD}"
     restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  grafana-storage: {}
