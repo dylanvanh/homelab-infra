@@ -146,6 +146,17 @@ services:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres?sslmode=disable"
+    expose:
+      - "9187"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
 volumes:
   grafana-storage: {}
   prometheus-storage: {}
