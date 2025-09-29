@@ -17,3 +17,7 @@ scrape_configs:
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
+
+  - job_name: "valkey"
+    static_configs:
+      - targets: ["valkey-exporter:9121"]

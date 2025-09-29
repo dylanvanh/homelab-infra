@@ -181,7 +181,28 @@ services:
       - "8080"
     restart: unless-stopped
 
+  valkey:
+    image: valkey/valkey:latest
+    container_name: valkey
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey-data:/data
+    restart: unless-stopped
+
+  valkey-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: valkey-exporter
+    environment:
+      REDIS_ADDR: "valkey:6379"
+    expose:
+      - "9121"
+    depends_on:
+      - valkey
+    restart: unless-stopped
+
 volumes:
   grafana-storage: {}
   prometheus-storage: {}
   postgres-data: {}
+  valkey-data: {}
