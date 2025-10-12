@@ -1,4 +1,10 @@
 services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+
   nginx:
     image: nginx:alpine
     container_name: nginx-reverse-proxy
@@ -20,46 +26,34 @@ services:
   pixel-pythons:
     build: ../pixel-pythons
     container_name: pixel-pythons-app
-    expose:
-      - "3001"
     restart: unless-stopped
 
   portfolio:
     build: ../portfolio
     container_name: portfolio-app
-    expose:
-      - "80"
     restart: unless-stopped
 
   investec:
     build: ../investec-transaction-buckets
     container_name: investec-app
     env_file: ../investec-transaction-buckets/.env
-    expose:
-      - "8080"
     restart: unless-stopped
 
   ollama:
     image: ollama/ollama:latest
     container_name: ollama-app
-    expose:
-      - "11434"
     restart: unless-stopped
 
   nuke:
     build: ../btc-transaction-nuke
     container_name: nuke-app
     env_file: ../btc-transaction-nuke/.env
-    expose:
-      - "3000"
     restart: unless-stopped
 
   strava-bot:
     build: ../strava-bot-rust
     container_name: strava-bot
     env_file: ../strava-bot-rust/.env
-    expose:
-      - "8081"
     restart: unless-stopped
 
   dozzle:
@@ -78,8 +72,6 @@ services:
     build: ../hevy-progressive-overloader
     container_name: hevy-progressive-overloader-app
     env_file: ../hevy-progressive-overloader/.env
-    expose:
-      - "3005"
     restart: unless-stopped
 
   pihole:
@@ -119,8 +111,6 @@ services:
       PIHOLE_PASSWORD: "${PIHOLE_PASSWORD}"
       INTERVAL: "30s"
       PORT: "9617"
-    expose:
-      - "9617"
     depends_on:
       - pihole
     restart: unless-stopped
@@ -151,8 +141,6 @@ services:
     container_name: postgres-exporter
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres?sslmode=disable"
-    expose:
-      - "9187"
     depends_on:
       - postgres
     restart: unless-stopped
@@ -161,12 +149,10 @@ services:
     image: prom/node-exporter:latest
     container_name: node-exporter
     command:
-      - '--path.rootfs=/host'
+      - "--path.rootfs=/host"
     pid: host
     volumes:
       - /:/host:ro,rslave
-    expose:
-      - "9100"
     restart: unless-stopped
 
   cadvisor:
@@ -177,8 +163,6 @@ services:
       - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    expose:
-      - "8080"
     restart: unless-stopped
 
   valkey:
@@ -195,8 +179,6 @@ services:
     container_name: valkey-exporter
     environment:
       REDIS_ADDR: "valkey:6379"
-    expose:
-      - "9121"
     depends_on:
       - valkey
     restart: unless-stopped
