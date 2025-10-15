@@ -21,6 +21,8 @@ services:
       - nuke
       - strava-bot
       - hevy-progressive-overloader
+      - sats-kit-client
+      - sats-kit-server
     restart: unless-stopped
 
   pixel-pythons:
@@ -72,6 +74,22 @@ services:
     build: ../hevy-progressive-overloader
     container_name: hevy-progressive-overloader-app
     env_file: ../hevy-progressive-overloader/.env
+    restart: unless-stopped
+
+  sats-kit-server:
+    build:
+      context: ../sats-kit/server
+    container_name: sats-kit-server
+    environment:
+      - RUST_LOG=info
+    restart: unless-stopped
+
+  sats-kit-client:
+    build:
+      context: ../sats-kit/client
+    container_name: sats-kit-client
+    depends_on:
+      - sats-kit-server
     restart: unless-stopped
 
   pihole:
