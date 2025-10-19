@@ -14,6 +14,8 @@ spec:
       labels:
         app: nuke
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: nuke
           image: ghcr.io/dylanvanh/btc-transaction-nuke:latest
