@@ -16,3 +16,13 @@ spec:
                 name: nuke-app
                 port:
                   number: 3000
+    - host: portfolio.dylanvh.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio-app
+                port:
+                  number: 80
