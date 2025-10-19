@@ -1,2 +1,4 @@
 pihole/
 .env
+
+.DS_Store
