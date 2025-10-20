@@ -26,3 +26,13 @@ spec:
                 name: portfolio-app
                 port:
                   number: 80
+    - host: satskit.dylanvh.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sats-kit-client
+                port:
+                  number: 80

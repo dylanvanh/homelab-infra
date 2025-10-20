@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sats-kit-server
+  labels:
+    app: sats-kit-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sats-kit-server
+  template:
+    metadata:
+      labels:
+        app: sats-kit-server
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: sats-kit-server
+          image: ghcr.io/dylanvanh/sats-kit-server:latest
+          imagePullPolicy: Always
+          env:
+            - name: RUST_LOG
+              value: "info"
+          ports:
+            - containerPort: 8000
+              name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sats-kit-client
+  labels:
+    app: sats-kit-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sats-kit-client
+  template:
+    metadata:
+      labels:
+        app: sats-kit-client
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: sats-kit-client
+          image: ghcr.io/dylanvanh/sats-kit-client:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
