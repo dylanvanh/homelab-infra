@@ -2,3 +2,7 @@ pihole/
 .env
 
 .DS_Store
+
+# Kubernetes secrets (NOT examples)
+**/secret.yaml
+!**/secret.yaml.example

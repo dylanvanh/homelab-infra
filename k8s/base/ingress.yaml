@@ -36,3 +36,13 @@ spec:
                 name: sats-kit-client
                 port:
                   number: 80
+    - host: pixelpythons.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pixel-pythons
+                port:
+                  number: 3001

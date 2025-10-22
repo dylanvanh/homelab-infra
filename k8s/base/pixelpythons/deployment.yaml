@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pixel-pythons
+  labels:
+    app: pixel-pythons
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pixel-pythons
+  template:
+    metadata:
+      labels:
+        app: pixel-pythons
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: pixel-pythons
+          image: ghcr.io/dylanvanh/pixel-pythons:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3001
+              name: http
+          envFrom:
+            - configMapRef:
+                name: pixel-pythons-config
+            - secretRef:
+                name: pixel-pythons-secrets
