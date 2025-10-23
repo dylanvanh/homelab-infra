@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strava-bot
+  labels:
+    app: strava-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: strava-bot
+  template:
+    metadata:
+      labels:
+        app: strava-bot
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: strava-bot
+          image: ghcr.io/dylanvanh/strava-bot:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: strava-bot-secrets
