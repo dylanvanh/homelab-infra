@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hevy-progressive-overloader
+  labels:
+    app: hevy-progressive-overloader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hevy-progressive-overloader
+  template:
+    metadata:
+      labels:
+        app: hevy-progressive-overloader
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: hevy-progressive-overloader
+          image: ghcr.io/dylanvanh/hevy-progressive-overloader:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: hevy-secrets
