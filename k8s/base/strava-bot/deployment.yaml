@@ -18,7 +18,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: strava-bot
-          image: ghcr.io/dylanvanh/strava-bot:latest
+          image: ghcr.io/dylanvanh/strava-bot-rust:latest
           imagePullPolicy: Always
           envFrom:
             - secretRef:
