@@ -5,7 +5,7 @@ metadata:
   labels:
     app: pixel-pythons
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: pixel-pythons
