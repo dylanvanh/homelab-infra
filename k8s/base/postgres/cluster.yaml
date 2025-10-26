@@ -1,0 +1,22 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  instances: 2
+
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    size: 10Gi
+    storageClass: local-path
+
+  bootstrap:
+    initdb:
+      database: investec
+      owner: app
+      secret:
+        name: postgres-app-secret # defined in /k8s/base/postgres/secret.yaml
+
+  monitoring:
+    enablePodMonitor: true
