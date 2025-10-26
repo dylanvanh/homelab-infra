@@ -3,7 +3,6 @@ kind: ConfigMap
 metadata:
   name: pixel-pythons-config
 data:
-  MEMPOOL_URL: "https://mempool.space"
   ORDISCAN_URL: "https://api.ordiscan.com"
   NEXT_PUBLIC_BASE_URL: "https://pixelpythons.xyz"
   NEXT_PUBLIC_PARENT_INSCRIPTION_ID: "04ae1b587a14cd8479d3e3b9e061261b941744eb89eb740108b6e3506dc46ae5i0"
