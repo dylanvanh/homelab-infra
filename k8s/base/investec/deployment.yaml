@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: investec
+  labels:
+    app: investec
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: investec
+  template:
+    metadata:
+      labels:
+        app: investec
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for postgres to be ready..."
+              until nc -z postgres 5432; do
+                echo "Postgres is unavailable - sleeping"
+                sleep 2
+              done
+              echo "Postgres is ready!"
+        - name: wait-for-ollama
+          image: busybox:1.36
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for ollama to be ready..."
+              until nc -z ollama 11434; do
+                echo "Ollama is unavailable - sleeping"
+                sleep 2
+              done
+              echo "Ollama is ready!"
+      containers:
+        - name: investec
+          image: ghcr.io/dylanvanh/investec:latest
+          imagePullPolicy: Always
+          env:
+            - name: OLLAMA_HOST
+              value: "http://ollama:11434"
+          envFrom:
+            - secretRef:
+                name: investec-secret
+          ports:
+            - containerPort: 3000
+              name: http
