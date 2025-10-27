@@ -1,0 +1,19 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefikhm
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    deployment:
+      replicas: 2
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - traefik
+            topologyKey: kubernetes.io/hostname
