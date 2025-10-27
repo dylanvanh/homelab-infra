@@ -5,11 +5,10 @@ metadata:
   labels:
     app: postgres
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 5432
       targetPort: 5432
-      nodePort: 30432
       name: postgres
   selector:
     cnpg.io/cluster: postgres
