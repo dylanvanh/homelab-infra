@@ -29,6 +29,13 @@ spec:
     - host: satskit.dylanvh.com
       http:
         paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: sats-kit-server
+                port:
+                  number: 8000
           - path: /
             pathType: Prefix
             backend:
