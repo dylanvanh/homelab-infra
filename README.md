@@ -17,6 +17,26 @@ For projects requiring secrets, create `secret.yaml` from the example:
 cp k8s/base/<project>/secret.yaml.example k8s/base/<project>/secret.yaml
 ```
 
+### Initial k3s Setup
+
+1. On the **control plane node** (first node):
+
+```bash
+curl -sfL https://get.k3s.io | sh -
+```
+
+2. On **worker nodes** (additional nodes), join the cluster:
+
+```bash
+curl -sfL https://get.k3s.io | K3S_URL=https://<CONTROL_PLANE_IP>:6443 K3S_TOKEN=<TOKEN_FROM_CONTROL_PLANE> sh -
+```
+
+Get the token from the control plane node:
+
+```bash
+sudo cat /var/lib/rancher/k3s/server/node-token
+```
+
 ### Tailscale Configuration
 
 To configure k3s to use Tailscale for cluster communication:
