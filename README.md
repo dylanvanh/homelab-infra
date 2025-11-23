@@ -2,6 +2,20 @@
 
 Infrastructure configuration for running services on Raspberry Pi cluster.
 
+## Contents
+
+- [Versions](#versions)
+- [Kubernetes Setup](#kubernetes-setup)
+  - [Prerequisites](#prerequisites)
+  - [Initial k3s Setup](#initial-k3s-setup)
+  - [Tailscale Configuration](#tailscale-configuration)
+  - [Deploy Services](#deploy-services)
+- [Helmfile (Monitoring Stack) quickstart](#helmfile-monitoring-stack-quickstart)
+  - [Install tooling](#install-tooling)
+  - [Enable diff (recommended)](#enable-diff-recommended)
+  - [Apply releases](#apply-releases)
+  - [Access monitoring components](#access-monitoring-components)
+
 ## Versions
 
 - **v1 (docker-compose branch):** Docker Compose setup
@@ -10,6 +24,23 @@ Infrastructure configuration for running services on Raspberry Pi cluster.
 ## Kubernetes Setup
 
 ### Prerequisites
+
+**On your dev machine (macOS):**
+
+```bash
+brew install helm helmfile kubectl-cnpg
+```
+
+**Install Helm plugins:**
+
+```bash
+helm plugin install https://github.com/databus23/helm-diff
+
+# Or initialize helmfile which installs required plugins
+helmfile init
+```
+
+**Setup secrets:**
 
 For projects requiring secrets, create `secret.yaml` from the example:
 
@@ -143,21 +174,12 @@ The monitoring stack includes:
 - **Node Exporter** - Node-level metrics
 - **Kube State Metrics** - Kubernetes object metrics
 
-### Install tooling
-
-```bash
-# macOS
-brew install helm helmfile
-```
-
 ### Enable diff (recommended)
 
-```bash
-# Installs required plugins incl. helm-diff
-helmfile init
+If you haven't already installed helm-diff, you can initialize helmfile which installs required plugins:
 
-# Or install diff plugin explicitly
-helm plugin install https://github.com/databus23/helm-diff
+```bash
+helmfile init
 ```
 
 ### Apply releases
