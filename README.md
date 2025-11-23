@@ -101,7 +101,8 @@ ExecStart=
 ExecStart=/usr/local/bin/k3s server \
     --node-ip=<CONTROL_PLANE_TAILSCALE_IP> \
     --advertise-address=<CONTROL_PLANE_TAILSCALE_IP> \
-    --node-external-ip=<CONTROL_PLANE_TAILSCALE_IP>
+    --node-external-ip=<CONTROL_PLANE_TAILSCALE_IP> \
+    --flannel-iface=tailscale0
 ```
 
 Save and restart:
@@ -124,7 +125,8 @@ Add the following configuration (replace `<WORKER_TAILSCALE_IP>` with this node'
 ExecStart=
 ExecStart=/usr/local/bin/k3s agent \
     --node-ip=<WORKER_TAILSCALE_IP> \
-    --server https://<CONTROL_PLANE_TAILSCALE_IP>:6443
+    --server https://<CONTROL_PLANE_TAILSCALE_IP>:6443 \
+    --flannel-iface=tailscale0
 ```
 
 Save and restart:
