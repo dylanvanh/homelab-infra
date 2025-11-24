@@ -81,6 +81,8 @@ sudo cat /var/lib/rancher/k3s/server/node-token
 
 To configure k3s to use Tailscale for cluster communication:
 
+> **Note on MTU:** The `--flannel-iface=tailscale0` flag is critical. It ensures Kubernetes adjusts packet sizes (MTU 1230) to fit inside the Tailscale tunnel (MTU 1280), preventing packet loss and connectivity issues.
+
 1. Get the Tailscale IPv4 address on each node:
 
 ```bash
