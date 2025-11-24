@@ -1,0 +1,54 @@
+# Configuration for mojo2600/pihole Helm chart
+
+# Keep the web interface internal
+serviceWeb:
+  type: ClusterIP
+  http:
+    port: 80
+  https:
+    enabled: false
+
+# DNS Service
+serviceDns:
+  type: ClusterIP
+  port: 53
+  # Set to true if you want to expose DNS to the network via LoadBalancer (e.g. MetalLB)
+  # type: LoadBalancer 
+
+# Persistence for configuration and logs
+persistentVolumeClaim:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  storageClass: "local-path"
+
+# Persistence for custom DNS settings (dnsmasq)
+persistentVolumeClaimDnsmasq:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  storageClass: "local-path"
+
+# Set a default password (change this!)
+# adminPassword: "changeme"
+
+# Use existing secret
+admin:
+  existingSecret: "pihole-secret"
+  passwordKey: "password"
+
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Ensure it runs on the Pi
+nodeSelector:
+  kubernetes.io/hostname: pi
