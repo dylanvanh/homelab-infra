@@ -1,19 +1,24 @@
 # Configuration for mojo2600/pihole Helm chart
 
-# Keep the web interface internal
+# Web UI on port 8080 (avoids Traefik on 80/443). Access via Tailscale IP.
+# webHttps must be set to avoid port 443 conflict even though HTTPS is disabled.
 serviceWeb:
   type: ClusterIP
   http:
-    port: 80
+    port: 8080
   https:
     enabled: false
 
-# DNS Service
+webHttp: "8080"
+webHttps: "8443"
+
+# DNS Service - uses hostNetwork for direct port 53 exposure
 serviceDns:
   type: ClusterIP
   port: 53
-  # Set to true if you want to expose DNS to the network via LoadBalancer (e.g. MetalLB)
-  # type: LoadBalancer 
+
+serviceDhcp:
+  enabled: false
 
 # Persistence for configuration and logs
 persistentVolumeClaim:
@@ -39,7 +44,6 @@ admin:
   existingSecret: "pihole-secret"
   passwordKey: "password"
 
-
 # Resource limits
 resources:
   limits:
@@ -52,3 +56,10 @@ resources:
 # Ensure it runs on the Pi
 nodeSelector:
   kubernetes.io/hostname: pi
+
+# Use HostNetwork mode for direct LAN exposure
+hostNetwork: true
+
+# Upstream DNS servers (Cloudflare)
+DNS1: "1.1.1.1"
+DNS2: "1.0.0.1"
