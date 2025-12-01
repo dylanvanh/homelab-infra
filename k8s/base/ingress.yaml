@@ -53,3 +53,13 @@ spec:
                 name: pixel-pythons
                 port:
                   number: 3001
+    - host: jellyseerr.dylanvh.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jellyseerr
+                port:
+                  number: 5055
