@@ -63,3 +63,10 @@ hostNetwork: true
 # Upstream DNS servers (Cloudflare)
 DNS1: "1.1.1.1"
 DNS2: "1.0.0.1"
+
+# Disable broken probes (helm chart probes incompatible with newer Pi-hole API)
+probes:
+  liveness:
+    enabled: false
+  readiness:
+    enabled: false
