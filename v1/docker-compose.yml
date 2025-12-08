@@ -26,17 +26,19 @@ services:
     restart: unless-stopped
 
   pixel-pythons:
-    build: ../pixel-pythons
+    image: ghcr.io/dylanvanh/pixel-pythons:latest
     container_name: pixel-pythons-app
+    ports:
+      - "3001:3001"
     restart: unless-stopped
 
   portfolio:
-    build: ../portfolio
+    image: ghcr.io/dylanvanh/portfolio:latest
     container_name: portfolio-app
     restart: unless-stopped
 
   investec:
-    build: ../investec-transaction-buckets
+    image: ghcr.io/dylanvanh/investec-transaction-buckets:latest
     container_name: investec-app
     env_file: ../investec-transaction-buckets/.env
     restart: unless-stopped
@@ -47,13 +49,13 @@ services:
     restart: unless-stopped
 
   nuke:
-    build: ../btc-transaction-nuke
+    image: ghcr.io/dylanvanh/btc-transaction-nuke:latest
     container_name: nuke-app
     env_file: ../btc-transaction-nuke/.env
     restart: unless-stopped
 
   strava-bot:
-    build: ../strava-bot-rust
+    image: ghcr.io/dylanvanh/strava-bot-rust:latest
     container_name: strava-bot
     env_file: ../strava-bot-rust/.env
     restart: unless-stopped
@@ -71,22 +73,20 @@ services:
     restart: unless-stopped
 
   hevy-progressive-overloader:
-    build: ../hevy-progressive-overloader
+    image: ghcr.io/dylanvanh/hevy-progressive-overloader:latest
     container_name: hevy-progressive-overloader-app
     env_file: ../hevy-progressive-overloader/.env
     restart: unless-stopped
 
   sats-kit-server:
-    build:
-      context: ../sats-kit/server
+    image: ghcr.io/dylanvanh/sats-kit-server:latest
     container_name: sats-kit-server
     environment:
       - RUST_LOG=info
     restart: unless-stopped
 
   sats-kit-client:
-    build:
-      context: ../sats-kit/client
+    image: ghcr.io/dylanvanh/sats-kit-client:latest
     container_name: sats-kit-client
     depends_on:
       - sats-kit-server
