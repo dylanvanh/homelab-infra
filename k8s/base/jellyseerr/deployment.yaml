@@ -38,5 +38,19 @@ spec:
               mountPath: /app/config
       volumes:
         - name: jellyseerr-config
-          emptyDir: {}
-
+          persistentVolumeClaim:
+            claimName: jellyseerr-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyseerr-config
+  labels:
+    app: jellyseerr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
