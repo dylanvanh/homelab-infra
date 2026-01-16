@@ -26,5 +26,20 @@ spec:
               mountPath: /config
       volumes:
         - name: config
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: homeassistant-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeassistant-config
+  labels:
+    app: homeassistant
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
 
