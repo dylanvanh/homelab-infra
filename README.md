@@ -152,6 +152,33 @@ kubectl get nodes -o wide
 
 The `INTERNAL-IP` column should show Tailscale IPs (100.x.x.x range).
 
+### Troubleshooting: node `Ready`, app still times out
+
+After a Tailscale outage/key expiry, a worker can return `Ready` while flannel routes are still stale.
+
+```bash
+# on control plane
+ip route
+# if worker PodCIDR route is missing, cross-node pod traffic is broken
+
+sudo kubectl get nodes -o wide
+sudo kubectl get endpoints -A -o wide
+```
+
+Fix (fastest):
+
+```bash
+sudo systemctl restart k3s
+```
+
+Optional first try (worker only):
+
+```bash
+# on worker
+sudo systemctl restart tailscaled
+sudo systemctl restart k3s-agent
+```
+
 ### Deploy Services
 
 **Deploy a single project:**
