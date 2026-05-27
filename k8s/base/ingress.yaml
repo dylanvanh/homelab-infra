@@ -43,7 +43,7 @@ spec:
                 name: sats-kit-client
                 port:
                   number: 80
-    - host: pixelpythons.xyz
+    - host: pixelpythons.dylanvh.com
       http:
         paths:
           - path: /
