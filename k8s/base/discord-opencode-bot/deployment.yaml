@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-opencode-bot
+  labels:
+    app: discord-opencode-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-opencode-bot
+  template:
+    metadata:
+      labels:
+        app: discord-opencode-bot
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: discord-opencode-bot
+          image: ghcr.io/dylanvanh/discord-opencode-bot:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: discord-opencode-bot-config
+            - secretRef:
+                name: discord-opencode-bot-secrets

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: discord-opencode-bot-config
+data:
+  OPENCODE_BASE_URL: "http://127.0.0.1:4096"
+  OPENCODE_AGENT: "plan"
+  OPENCODE_REQUEST_TIMEOUT_MS: "180000"
+  OPENCODE_CONTEXT_WINDOW_TOKENS: "128000"
+  OPENCODE_COMPACT_AT_CONTEXT_PERCENT: "50"
