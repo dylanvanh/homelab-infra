@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ascend-config
+data:
+  API_URL: "https://ascend.dylanvh.com"
+  APP_URL: "https://ascend.dylanvh.com"
+  OPENCODE_REQUEST_TIMEOUT_MS: "600000"
+  PORT: "8787"
+  STRAVA_REDIRECT_URI: "https://ascend.dylanvh.com/api/auth/oauth2/callback/strava"
