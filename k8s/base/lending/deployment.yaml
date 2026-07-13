@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lending
+  labels:
+    app: lending
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lending
+  template:
+    metadata:
+      labels:
+        app: lending
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: lending
+          image: ghcr.io/dylanvanh/liquidium-sdk-demo:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi

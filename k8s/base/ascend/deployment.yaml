@@ -20,7 +20,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: ascend-api
-          image: ghcr.io/dylanvanh/ascend-api:v0.1.6
+          image: ghcr.io/dylanvanh/ascend-api:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -61,7 +61,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: ascend-web
-          image: ghcr.io/dylanvanh/ascend-web:v0.1.8
+          image: ghcr.io/dylanvanh/ascend-web:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

@@ -6,6 +6,16 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   rules:
+    - host: lending.dylanvh.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lending
+                port:
+                  number: 80
     - host: nuke.dylanvh.com
       http:
         paths:
