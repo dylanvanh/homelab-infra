@@ -16,6 +16,16 @@ spec:
                 name: lending
                 port:
                   number: 80
+    - host: linkding.dylanvh.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: linkding
+                port:
+                  number: 9090
     - host: nuke.dylanvh.com
       http:
         paths:
