@@ -45,7 +45,7 @@ helmfile init
 For projects requiring secrets, create `secret.yaml` from the example:
 
 ```bash
-cp k8s/base/<project>/secret.yaml.example k8s/base/<project>/secret.yaml
+cp k8s/<project>/secret.yaml.example k8s/<project>/secret.yaml
 ```
 
 Create the GitHub Container Registry secret for image pulls:
@@ -184,14 +184,14 @@ sudo systemctl restart k3s-agent
 **Deploy a single project:**
 
 ```bash
-kubectl apply -f k8s/base/<project>/
+kubectl apply -f k8s/<project>/
 ```
 
 **Deploy all projects at once:**
 
 ```bash
 # Apply all Kubernetes manifests (excludes helmfile.yaml)
-find k8s/base -name "*.yaml" -not -name "helmfile.yaml" -exec kubectl apply -f {} \;
+find k8s -name "*.yaml" -not -name "helmfile.yaml" -exec kubectl apply -f {} \;
 ```
 
 ## Helmfile (Monitoring Stack) quickstart
@@ -219,7 +219,7 @@ helmfile init
 helmfile apply
 ```
 
-The kube-prometheus-stack release uses values from `k8s/base/kube-prometheus-stack/values-helm.yaml`:
+The kube-prometheus-stack release uses values from `k8s/kube-prometheus-stack/values-helm.yaml`:
 
 - Grafana: ClusterIP, persistence enabled (2Gi), no Ingress
 - Prometheus: 30-day retention, 10Gi storage
