@@ -28,14 +28,6 @@ persistentVolumeClaim:
   size: 1Gi
   storageClass: "local-path"
 
-# Persistence for custom DNS settings (dnsmasq)
-persistentVolumeClaimDnsmasq:
-  enabled: true
-  accessModes:
-    - ReadWriteOnce
-  size: 1Gi
-  storageClass: "local-path"
-
 # Set a default password (change this!)
 # adminPassword: "changeme"
 
