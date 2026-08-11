@@ -11,6 +11,7 @@ grafana:
 
 prometheus:
   prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
     retention: 30d
     storageSpec:
       volumeClaimTemplate:

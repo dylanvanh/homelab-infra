@@ -14,7 +14,6 @@ kubectl apply --server-side -f \
 ```bash
 kubectl apply -f secret.yaml
 kubectl apply -f cluster.yaml
-kubectl apply -f service.yaml
 ```
 
 ## Check Status
@@ -29,7 +28,7 @@ kubectl get pods -l cnpg.io/cluster=postgres -L role
 ### From cluster
 
 ```
-postgresql://username:password@postgres:5432/investec
+postgresql://username:password@postgres-rw:5432/investec
 ```
 
 ### From dev machine (via tailscale)

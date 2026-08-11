@@ -23,7 +23,7 @@ spec:
           args:
             - |
               echo "Waiting for postgres to be ready..."
-              until nc -z postgres 5432; do
+              until nc -z postgres-rw 5432; do
                 echo "Postgres is unavailable - sleeping"
                 sleep 2
               done
