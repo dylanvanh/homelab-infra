@@ -2,25 +2,6 @@
 
 Infrastructure configuration for running services on Raspberry Pi cluster.
 
-## Contents
-
-- [Versions](#versions)
-- [Kubernetes Setup](#kubernetes-setup)
-  - [Prerequisites](#prerequisites)
-  - [Initial k3s Setup](#initial-k3s-setup)
-  - [Tailscale Configuration](#tailscale-configuration)
-  - [Deploy Services](#deploy-services)
-- [Helmfile (Monitoring Stack) quickstart](#helmfile-monitoring-stack-quickstart)
-  - [Install tooling](#install-tooling)
-  - [Enable diff (recommended)](#enable-diff-recommended)
-  - [Apply releases](#apply-releases)
-  - [Access monitoring components](#access-monitoring-components)
-
-## Versions
-
-- **v1 (docker-compose branch):** Docker Compose setup
-- **v2** Kubernetes (k3s) setup
-
 ## Kubernetes Setup
 
 ### Prerequisites
@@ -28,15 +9,7 @@ Infrastructure configuration for running services on Raspberry Pi cluster.
 **On your dev machine (macOS):**
 
 ```bash
-brew install helm helmfile kubectl-cnpg
-```
-
-**Install Helm plugins:**
-
-```bash
-helm plugin install https://github.com/databus23/helm-diff
-
-# Or initialize helmfile which installs required plugins
+brew install helmfile
 helmfile init
 ```
 
@@ -89,52 +62,30 @@ To configure k3s to use Tailscale for cluster communication:
 tailscale ip -4
 ```
 
-2. On the **control plane node** (server):
+2. On the **control plane node**, create `/etc/rancher/k3s/config.yaml`:
+
+```yaml
+node-ip: <CONTROL_PLANE_TAILSCALE_IP>
+advertise-address: <CONTROL_PLANE_TAILSCALE_IP>
+node-external-ip: <CONTROL_PLANE_TAILSCALE_IP>
+flannel-iface: tailscale0
+```
+
+3. On each **worker node**, create `/etc/rancher/k3s/config.yaml`:
+
+```yaml
+server: https://<CONTROL_PLANE_TAILSCALE_IP>:6443
+node-ip: <WORKER_TAILSCALE_IP>
+flannel-iface: tailscale0
+```
+
+Restart K3s after you change the files:
 
 ```bash
-sudo SYSTEMD_EDITOR=vim systemctl edit k3s
-```
-
-Add the following configuration (replace `<CONTROL_PLANE_TAILSCALE_IP>` with the IP from step 1):
-
-```
-[Service]
-ExecStart=
-ExecStart=/usr/local/bin/k3s server \
-    --node-ip=<CONTROL_PLANE_TAILSCALE_IP> \
-    --advertise-address=<CONTROL_PLANE_TAILSCALE_IP> \
-    --node-external-ip=<CONTROL_PLANE_TAILSCALE_IP> \
-    --flannel-iface=tailscale0
-```
-
-Save and restart:
-
-```bash
-sudo systemctl daemon-reload
+# Control plane
 sudo systemctl restart k3s
-```
 
-3. On each **worker node**:
-
-```bash
-sudo SYSTEMD_EDITOR=vim systemctl edit k3s-agent
-```
-
-Add the following configuration (replace `<WORKER_TAILSCALE_IP>` with this node's IP and `<CONTROL_PLANE_TAILSCALE_IP>` with the server's IP):
-
-```
-[Service]
-ExecStart=
-ExecStart=/usr/local/bin/k3s agent \
-    --node-ip=<WORKER_TAILSCALE_IP> \
-    --server https://<CONTROL_PLANE_TAILSCALE_IP>:6443 \
-    --flannel-iface=tailscale0
-```
-
-Save and restart:
-
-```bash
-sudo systemctl daemon-reload
+# Workers
 sudo systemctl restart k3s-agent
 ```
 
@@ -196,64 +147,25 @@ find k8s -name "*.yaml" -not -name "helmfile.yaml" -exec kubectl apply -f {} \;
 
 ## Helmfile (Monitoring Stack) quickstart
 
-The monitoring stack includes:
-
-- **Prometheus** - Metrics collection and storage
-- **Grafana** - Visualization and dashboards
-- **Alertmanager** - Alert management
-- **Prometheus Operator** - Manages Prometheus instances
-- **Node Exporter** - Node-level metrics
-- **Kube State Metrics** - Kubernetes object metrics
-
-### Enable diff (recommended)
-
-If you haven't already installed helm-diff, you can initialize helmfile which installs required plugins:
-
-```bash
-helmfile init
-```
-
 ### Apply releases
 
 ```bash
 helmfile apply
 ```
 
-The kube-prometheus-stack release uses values from `k8s/kube-prometheus-stack/values-helm.yaml`:
-
-- Grafana: ClusterIP, persistence enabled (2Gi), no Ingress
-- Prometheus: 30-day retention, 10Gi storage
-- Alertmanager: 2Gi storage
-- All components use `local-path` storage class
+The kube-prometheus-stack release uses values from `k8s/kube-prometheus-stack/values-helm.yaml`.
 
 ### Access monitoring components
 
-All components are in the `monitoring` namespace and accessed via port-forward:
+Run the required port-forward in its own terminal:
 
-**Grafana:**
+| Component | Command | URL |
+| --- | --- | --- |
+| Grafana | `kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80` | http://localhost:3000 |
+| Prometheus | `kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090` | http://localhost:9090 |
+| Alertmanager | `kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093` | http://localhost:9093 |
 
-```bash
-kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
-# open http://localhost:3000
-# Username: admin
-# Password: (get below)
-```
-
-**Prometheus:**
-
-```bash
-kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
-# open http://localhost:9090
-```
-
-**Alertmanager:**
-
-```bash
-kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093:9093
-# open http://localhost:9093
-```
-
-**Get Grafana admin password:**
+The Grafana username is `admin`. Get its password with:
 
 ```bash
 kubectl get secret -n monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 -d && echo
