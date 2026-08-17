@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidebet-api
+  labels:
+    app: sidebet-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidebet-api
+  template:
+    metadata:
+      labels:
+        app: sidebet-api
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      initContainers:
+        - name: migrate
+          image: ghcr.io/dylanvanh/sidebet-api:latest
+          imagePullPolicy: Always
+          command: ["bun", "run", "--cwd", "apps/api", "db:migrate"]
+          envFrom:
+            - secretRef:
+                name: sidebet-secret
+      containers:
+        - name: api
+          image: ghcr.io/dylanvanh/sidebet-api:latest
+          imagePullPolicy: Always
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: BETTER_AUTH_URL
+              value: "https://sidebet.dylanvh.com"
+            - name: BETTER_AUTH_TRUSTED_ORIGINS
+              value: "https://sidebet.dylanvh.com,sidebet://"
+          envFrom:
+            - secretRef:
+                name: sidebet-secret
+          ports:
+            - containerPort: 8787
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /db/health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidebet-discord-bot
+  labels:
+    app: sidebet-discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidebet-discord-bot
+  template:
+    metadata:
+      labels:
+        app: sidebet-discord-bot
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: discord-bot
+          image: ghcr.io/dylanvanh/sidebet-discord-bot:latest
+          imagePullPolicy: Always
+          env:
+            - name: SIDEBET_API_URL
+              value: "http://sidebet-api:8787"
+          envFrom:
+            - secretRef:
+                name: sidebet-secret
+          ports:
+            - containerPort: 8788
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidebet-web
+  labels:
+    app: sidebet-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidebet-web
+  template:
+    metadata:
+      labels:
+        app: sidebet-web
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: web
+          image: ghcr.io/dylanvanh/sidebet-web:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10

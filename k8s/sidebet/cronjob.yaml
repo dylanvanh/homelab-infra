@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sidebet-daily-reward
+spec:
+  schedule: "0 0 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: ghcr-secret
+          containers:
+            - name: daily-reward
+              image: ghcr.io/dylanvanh/sidebet-api:latest
+              imagePullPolicy: Always
+              command: ["bun", "-e"]
+              args:
+                - |
+                  const { awardDailyChipRewards } = await import("./apps/api/src/app.ts");
+                  console.log(await awardDailyChipRewards(process.env));
+              envFrom:
+                - secretRef:
+                    name: sidebet-secret
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sidebet-sync
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: ghcr-secret
+          containers:
+            - name: sync
+              image: ghcr.io/dylanvanh/sidebet-api:latest
+              imagePullPolicy: Always
+              command: ["bun", "-e"]
+              args:
+                - |
+                  const { synchronizeSportsMarkets } = await import("./apps/api/src/app.ts");
+                  console.log(await synchronizeSportsMarkets(process.env));
+              envFrom:
+                - secretRef:
+                    name: sidebet-secret
+              env:
+                - name: POLYMARKET_FEED_URL
+                  value: "https://gamma-api.polymarket.com"
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sidebet-settle
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: ghcr-secret
+          containers:
+            - name: settle
+              image: ghcr.io/dylanvanh/sidebet-api:latest
+              imagePullPolicy: Always
+              command: ["bun", "-e"]
+              args:
+                - |
+                  const { synchronizePendingBetResults } = await import("./apps/api/src/app.ts");
+                  console.log(await synchronizePendingBetResults(process.env));
+              envFrom:
+                - secretRef:
+                    name: sidebet-secret
+              env:
+                - name: POLYMARKET_FEED_URL
+                  value: "https://gamma-api.polymarket.com"
+          restartPolicy: OnFailure
