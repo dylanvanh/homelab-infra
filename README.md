@@ -72,7 +72,11 @@ node-ip: <CONTROL_PLANE_TAILSCALE_IP>
 advertise-address: <CONTROL_PLANE_TAILSCALE_IP>
 node-external-ip: <CONTROL_PLANE_TAILSCALE_IP>
 flannel-iface: tailscale0
+kube-controller-manager-arg:
+  - terminated-pod-gc-threshold=20
 ```
+
+The control plane keeps up to 20 stopped pod records for diagnostics.
 
 3. On each **worker node**, create `/etc/rancher/k3s/config.yaml`:
 
