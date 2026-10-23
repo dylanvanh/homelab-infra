@@ -14,6 +14,10 @@ spec:
       labels:
         app: discord-opencode-bot
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       nodeSelector:
         kubernetes.io/hostname: pi
       hostNetwork: true
@@ -22,8 +26,12 @@ spec:
         - name: ghcr-secret
       containers:
         - name: discord-opencode-bot
-          image: ghcr.io/dylanvanh/discord-opencode-bot:latest
-          imagePullPolicy: Always
+          image: ghcr.io/dylanvanh/discord-opencode-bot:security-20261023@sha256:1d1a9f8047e912b75999f9bb81e1ddc0cdd9835d4c1e137e8a13c2ce27f657d5
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
           envFrom:
             - configMapRef:
                 name: discord-opencode-bot-config
