@@ -5,7 +5,7 @@ metadata:
   labels:
     app: sidebet-api
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: sidebet-api
@@ -59,7 +59,7 @@ metadata:
   labels:
     app: sidebet-discord-bot
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: sidebet-discord-bot
@@ -103,7 +103,7 @@ metadata:
   labels:
     app: sidebet-web
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: sidebet-web

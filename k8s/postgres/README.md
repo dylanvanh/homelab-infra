@@ -1,18 +1,25 @@
 # Postgres Setup
 
-Using CloudNativePG for HA postgres with automatic failover.
+Using CloudNativePG 1.29.3 for PostgreSQL 18.6 with automatic failover.
+The cluster pins the standard Debian trixie image by digest. This image
+includes the configured `en_US.utf8` locale.
+
+Before a major upgrade, save a full backup outside the cluster and test its
+restore. Use the same Debian release for the PostgreSQL images before and
+after a major version change.
 
 ## Install Operator
 
 ```bash
 kubectl apply --server-side -f \
-  https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.24/releases/cnpg-1.24.1.yaml
+  https://github.com/cloudnative-pg/cloudnative-pg/releases/download/v1.29.3/cnpg-1.29.3.yaml
 ```
 
 ## Deploy Cluster
 
 ```bash
 kubectl apply -f secret.yaml
+# Restore postgres-server-ca from the private bundle first; see dietdial/README.md.
 kubectl apply -f cluster.yaml
 ```
 
@@ -20,7 +27,7 @@ kubectl apply -f cluster.yaml
 
 ```bash
 kubectl get cluster postgres
-kubectl get pods -l cnpg.io/cluster=postgres -L role
+kubectl get pods -l cnpg.io/cluster=postgres -L cnpg.io/instanceRole
 ```
 
 ## Connect
@@ -31,11 +38,11 @@ kubectl get pods -l cnpg.io/cluster=postgres -L role
 postgresql://username:password@postgres-rw:5432/investec
 ```
 
-### From dev machine (via tailscale)
+### DietDial production access
 
-```
-postgresql://username:password@ip:30432/investec
-```
+PostgreSQL uses private ClusterIP services. DietDial connects through Cloudflare
+Access and its dedicated Tunnel. See [DietDial operations](dietdial/README.md)
+for verified TLS, local tools, backups, and certificate renewal.
 
 ## Useful Commands
 
@@ -53,7 +60,7 @@ kubectl exec -it postgres-1 -- psql -U postgres -c "SELECT * FROM pg_stat_replic
 kubectl delete pod postgres-1
 ```
 
-- Exposed on NodePort 30432
+- PostgreSQL has no public NodePort.
 
 ## Docs
 

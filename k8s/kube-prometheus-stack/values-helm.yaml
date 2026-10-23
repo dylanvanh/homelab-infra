@@ -13,6 +13,7 @@ prometheus:
   prometheusSpec:
     podMonitorSelectorNilUsesHelmValues: false
     retention: 30d
+    retentionSize: 5GB
     storageSpec:
       volumeClaimTemplate:
         spec:

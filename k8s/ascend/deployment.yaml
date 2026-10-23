@@ -5,7 +5,7 @@ metadata:
   labels:
     app: ascend-api
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: ascend-api
@@ -46,7 +46,7 @@ metadata:
   labels:
     app: ascend-web
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: ascend-web

@@ -1,5 +1,8 @@
 # OpenCode listener restriction
 
+The full `opencode.service` in this repository already binds to loopback.
+Use the drop-in below for an existing installation to preserve its other settings.
+
 The existing gateway and host-network Discord bots call `127.0.0.1:4096`.
 Install `opencode.service.d/loopback.conf` under
 `/etc/systemd/system/opencode.service.d/`, reload systemd, and restart OpenCode.

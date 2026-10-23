@@ -1,0 +1,20 @@
+{
+  "account_id": "REPLACE_WITH_ACCOUNT_ID",
+  "wrangler_profile": "REPLACE_WITH_WRANGLER_PROFILE",
+  "dns_access_cli_profile": "REPLACE_WITH_DNS_ACCESS_CLI_PROFILE",
+  "zone": "REPLACE_WITH_ZONE",
+  "zone_id": "REPLACE_WITH_ZONE_ID",
+  "database_hostname": "REPLACE_WITH_DATABASE_HOSTNAME",
+  "tunnel_id": "REPLACE_WITH_TUNNEL_ID",
+  "access_application_id": "REPLACE_WITH_ACCESS_APPLICATION_ID",
+  "access_service_token_id": "REPLACE_WITH_ACCESS_SERVICE_TOKEN_ID",
+  "access_service_token_expires_at": "REPLACE_WITH_ACCESS_SERVICE_TOKEN_EXPIRES_AT",
+  "hyperdrive_id": "REPLACE_WITH_HYPERDRIVE_ID",
+  "hyperdrive_ca_certificate_id": "REPLACE_WITH_HYPERDRIVE_CA_CERTIFICATE_ID",
+  "sslmode": "REPLACE_WITH_SSLMODE",
+  "backup_bucket": "REPLACE_WITH_BACKUP_BUCKET",
+  "backup_worker_url": "REPLACE_WITH_BACKUP_WORKER_URL",
+  "backup_retention_days": "REPLACE_WITH_BACKUP_RETENTION_DAYS",
+  "backup_schedule_utc": "REPLACE_WITH_BACKUP_SCHEDULE_UTC",
+  "server_ca_expires_at": "REPLACE_WITH_SERVER_CA_EXPIRES_AT"
+}

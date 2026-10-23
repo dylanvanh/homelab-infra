@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "opencode-as-openai-api": {
+      "description": "Restricted OpenAI-compatible API adapter",
+      "mode": "primary",
+      "prompt": "Answer the supplied API conversation. Do not access local resources.",
+      "permission": {
+        "*": "deny"
+      }
+    }
+  }
+}
