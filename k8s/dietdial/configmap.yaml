@@ -18,6 +18,9 @@ data:
             proxy_pass https://menufit.dylanvh.com.;
             proxy_ssl_server_name on;
             proxy_ssl_name menufit.dylanvh.com;
+            proxy_ssl_verify on;
+            proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+            proxy_ssl_verify_depth 3;
             proxy_set_header Host menufit.dylanvh.com;
             proxy_set_header X-Forwarded-Host $host;
             proxy_set_header X-Forwarded-Proto https;

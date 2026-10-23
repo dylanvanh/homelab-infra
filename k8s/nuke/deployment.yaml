@@ -14,12 +14,23 @@ spec:
       labels:
         app: nuke
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: ghcr-secret
       containers:
         - name: nuke
-          image: ghcr.io/dylanvanh/btc-transaction-nuke:latest
-          imagePullPolicy: Always
+          image: ghcr.io/dylanvanh/btc-transaction-nuke:security-20261023@sha256:3feeba254ee13e6514450e7cf646547aff5d59610827338af06c5a7ad0c01677
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
           ports:
             - containerPort: 3000
               name: http
