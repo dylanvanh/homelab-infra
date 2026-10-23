@@ -1,0 +1,19 @@
+{
+  "name": "dietdial-db-backups",
+  "account_id": "7c4d19c1a3551dabe80c7f40126f6e5c",
+  "main": "backup-worker.js",
+  "compatibility_date": "2026-10-14",
+  "workers_dev": true,
+  "r2_buckets": [
+    {
+      "binding": "BACKUPS",
+      "bucket_name": "dietdial-db-backups"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  }
+}

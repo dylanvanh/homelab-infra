@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenCode gateway listener on the Pi Tailscale address
+
+[Socket]
+ListenStream=100.80.241.32:8788
+FreeBind=true
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target
