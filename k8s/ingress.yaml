@@ -16,30 +16,6 @@ spec:
                 name: dietdial-web
                 port:
                   number: 80
-    - host: sidebet.dylanvh.com
-      http:
-        paths:
-          - path: /discord
-            pathType: Prefix
-            backend:
-              service:
-                name: sidebet-discord-bot
-                port:
-                  number: 8788
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: sidebet-api
-                port:
-                  number: 8787
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: sidebet-web
-                port:
-                  number: 80
     - host: lending.dylanvh.com
       http:
         paths:
@@ -95,30 +71,6 @@ spec:
             backend:
               service:
                 name: sats-kit-client
-                port:
-                  number: 80
-    - host: ascend.dylanvh.com
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-api
-                port:
-                  number: 8787
-          - path: /rpc
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-api
-                port:
-                  number: 8787
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-web
                 port:
                   number: 80
     - host: pixelpythons.dylanvh.com
