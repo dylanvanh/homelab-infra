@@ -1,0 +1,13 @@
+{
+  "name": "dietdial-backup-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test backup-worker.test.mjs",
+    "deploy": "wrangler deploy --profile personal"
+  },
+  "devDependencies": {
+    "miniflare": "5.20261019.2-beta",
+    "wrangler": "4.152.0"
+  }
+}

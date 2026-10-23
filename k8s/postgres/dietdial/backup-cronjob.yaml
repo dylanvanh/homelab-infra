@@ -1,0 +1,180 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dietdial-database-backup
+  namespace: default
+spec:
+  schedule: 0 2 * * *
+  timeZone: Etc/UTC
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1200
+      ttlSecondsAfterFinished: 604800
+      template:
+        metadata:
+          labels:
+            app: dietdial-database-backup
+        spec:
+          restartPolicy: Never
+          nodeSelector:
+            kubernetes.io/hostname: pi
+          volumes:
+          - name: backup
+            emptyDir:
+              sizeLimit: 256Mi
+          - name: ca
+            secret:
+              secretName: postgres-server-ca
+              items:
+              - key: ca.crt
+                path: ca.crt
+          containers:
+          - name: dump
+            image: ghcr.io/cloudnative-pg/postgresql:18.6-202610120828-standard-trixie@sha256:c7747d8d1049fff9cf30d9cd83d14d609c957afb5ffbcd114145f393ea1850e1
+            command:
+            - bash
+            - -c
+            - |
+              set -eu
+              trap 'touch /backup/dump.failed' EXIT
+              backup_stamp=$(date -u +%Y%m%dT%H%M%SZ)
+              printf '%s' "$backup_stamp" > /backup/stamp
+              pg_dump --format=custom --compress=zstd:3 --no-owner --no-acl --file=/backup/database.dump
+              psql -X -At -v ON_ERROR_STOP=1 -c "SELECT json_build_object('database',current_database(),'server_version',current_setting('server_version'),'database_size_bytes',pg_database_size(current_database()),'captured_at',clock_timestamp(),'extensions',(SELECT json_agg(json_build_object('name',extname,'version',extversion)) FROM pg_extension));" > /backup/source.json
+              touch /backup/dump.ready
+              trap - EXIT
+            env:
+            - name: PGHOST
+              value: postgres-rw.default.svc.cluster.local
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: dietdial
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: dietdial-postgres-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dietdial-postgres-credentials
+                  key: password
+            - name: PGSSLMODE
+              value: verify-full
+            - name: PGSSLROOTCERT
+              value: /ca/ca.crt
+            - name: PGCONNECT_TIMEOUT
+              value: '30'
+            - name: PGOPTIONS
+              value: -c default_transaction_read_only=on -c statement_timeout=600000
+            - name: PGAPPNAME
+              value: dietdial-r2-backup
+            volumeMounts:
+            - name: backup
+              mountPath: /backup
+            - name: ca
+              mountPath: /ca
+              readOnly: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 384Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+          - name: upload
+            image: python:3.13-slim@sha256:57b29a7c050c4e679e4bea572e14b3965cf4b5839de2da49d55e49ffc4024f39
+            command:
+            - python3
+            - -c
+            - |
+              import hashlib
+              import json
+              import os
+              from pathlib import Path
+              import time
+              import urllib.request
+
+              folder = Path('/backup')
+              deadline = time.monotonic() + 600
+              while not (folder / 'dump.ready').exists():
+                  if (folder / 'dump.failed').exists():
+                      raise RuntimeError('Database dump failed')
+                  if time.monotonic() > deadline:
+                      raise RuntimeError('Database dump timed out')
+                  time.sleep(3)
+
+              archive = folder / 'database.dump'
+              stamp = (folder / 'stamp').read_text().strip()
+              with archive.open('rb') as stream:
+                  digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+              manifest = {
+                  **json.loads((folder / 'source.json').read_text()),
+                  'key': f'dietdial/{stamp}.dump',
+                  'archive_bytes': archive.stat().st_size,
+                  'archive_sha256': digest,
+                  'format': 'PostgreSQL custom archive, zstd, without owner or ACL',
+              }
+              manifest_path = folder / 'manifest.json'
+              manifest_path.write_text(json.dumps(manifest, indent=2))
+
+              for file, suffix in [(archive, '.dump'), (manifest_path, '.manifest.json')]:
+                  key = f'dietdial/{stamp}{suffix}'
+                  if not 0 < file.stat().st_size <= 96 * 1024 * 1024:
+                      raise RuntimeError('Backup object exceeds the upload size limit')
+                  data = file.read_bytes()
+                  request = urllib.request.Request(
+                      os.environ['BACKUP_URL'] + '/' + key,
+                      data=data,
+                      method='PUT',
+                      headers={
+                          'Authorization': 'Bearer ' + os.environ['BACKUP_TOKEN'],
+                          'Content-Type': 'application/octet-stream',
+                          'User-Agent': 'DietDial-Database-Backup/1.0',
+                          'X-Content-SHA256': hashlib.sha256(data).hexdigest(),
+                      },
+                  )
+                  for attempt in range(4):
+                      try:
+                          with urllib.request.urlopen(request, timeout=180) as response:
+                              result = json.load(response)
+                          if result['size'] != len(data):
+                              raise RuntimeError('Uploaded backup size does not match')
+                          print(json.dumps({'uploaded': key, 'bytes': len(data)}), flush=True)
+                          break
+                      except Exception:
+                          if attempt == 3:
+                              raise RuntimeError('Backup upload failed after four attempts') from None
+                          time.sleep(5 * (attempt + 1))
+              print(json.dumps({'backup_complete': True, 'sha256': digest}), flush=True)
+            envFrom:
+            - secretRef:
+                name: dietdial-backup-token
+            volumeMounts:
+            - name: backup
+              mountPath: /backup
+            resources:
+              requests:
+                cpu: 20m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+          automountServiceAccountToken: false
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
