@@ -1,6 +1,8 @@
 # homelab-infra
 
-Infrastructure configuration for running services on Raspberry Pi cluster.
+Infrastructure configuration for the Raspberry Pi cluster and VPS.
+
+Read [SECURITY.md](SECURITY.md) before committing or sharing files.
 
 ## Kubernetes Setup
 
@@ -24,10 +26,10 @@ cp k8s/<project>/secret.yaml.example k8s/<project>/secret.yaml
 Create the GitHub Container Registry secret for image pulls:
 
 ```bash
-kubectl create secret docker-registry ghcr-secret \
-  --docker-server=ghcr.io \
-  --docker-username=<your-github-username> \
-  --docker-password=<your-github-token>
+# Use an existing private Docker config. Do not put tokens in shell history.
+kubectl create secret generic ghcr-secret \
+  --type=kubernetes.io/dockerconfigjson \
+  --from-file=.dockerconfigjson="$PRIVATE_DOCKER_CONFIG"
 ```
 
 ### Initial k3s Setup

@@ -1,0 +1,41 @@
+name: Public repository checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'fix/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: '8.30.1'
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
+          GITLEAKS_ENABLE_SUMMARY: 'false'
+      - name: Install manifest parser
+        run: python3 -m pip install PyYAML==6.0.3
+      - name: Check staged public files
+        run: python3 scripts/check-public-files.py
+      - name: Test public-file checks
+        run: python3 -m unittest discover -s tests
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Install pinned Workers tools
+        working-directory: k8s/postgres/dietdial
+        run: npm ci --ignore-scripts
+      - name: Test backup upload boundaries
+        working-directory: k8s/postgres/dietdial
+        run: npm test
