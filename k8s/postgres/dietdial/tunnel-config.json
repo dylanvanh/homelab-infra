@@ -1,0 +1,13 @@
+{
+  "config": {
+    "ingress": [
+      {
+        "hostname": "dietdial-db.dylanvh.com",
+        "service": "tcp://postgres-rw.default.svc.cluster.local:5432"
+      },
+      {
+        "service": "http_status:404"
+      }
+    ]
+  }
+}
