@@ -14,12 +14,23 @@ spec:
       labels:
         app: pixel-pythons
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: ghcr-secret
       containers:
         - name: pixel-pythons
-          image: ghcr.io/dylanvanh/pixel-pythons:latest
-          imagePullPolicy: Always
+          image: ghcr.io/dylanvanh/pixel-pythons:security-20261023@sha256:c07416b3377fb84d9439729588cc4ad180c59954d63e54553c678b71506f136a
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
           ports:
             - containerPort: 3001
               name: http

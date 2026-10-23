@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-gang-prompt-bot
+  labels:
+    app: discord-gang-prompt-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-gang-prompt-bot
+  template:
+    metadata:
+      labels:
+        app: discord-gang-prompt-bot
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      nodeSelector:
+        kubernetes.io/hostname: pi
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: discord-gang-prompt-bot
+          image: ghcr.io/dylanvanh/discord-gang-prompt-bot:security-20261023@sha256:548747d53f1660aa8d1da5e658329844fc3f978f07926a76c2f08c412eaaaa66
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          envFrom:
+            - configMapRef:
+                name: discord-gang-prompt-bot-config
+            - secretRef:
+                name: discord-gang-prompt-bot-secrets
