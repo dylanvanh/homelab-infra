@@ -46,16 +46,6 @@ spec:
                 name: nuke-app
                 port:
                   number: 3000
-    - host: portfolio.dylanvh.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: portfolio-app
-                port:
-                  number: 80
     - host: satskit.dylanvh.com
       http:
         paths:
@@ -71,30 +61,6 @@ spec:
             backend:
               service:
                 name: sats-kit-client
-                port:
-                  number: 80
-    - host: ascend.dylanvh.com
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-api
-                port:
-                  number: 8787
-          - path: /rpc
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-api
-                port:
-                  number: 8787
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: ascend-web
                 port:
                   number: 80
     - host: pixelpythons.dylanvh.com
