@@ -1,0 +1,18 @@
+[Unit]
+Description=OpenCode server with the existing Codex login
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=dylan
+WorkingDirectory=/home/dylan
+Environment=HOME=/home/dylan
+Environment=PATH=/home/dylan/.local/bin:/home/dylan/.opencode/bin:/home/dylan/.nvm/versions/node/v24.14.1/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/dylan/.opencode/bin/opencode serve --hostname 127.0.0.1 --port 4096
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

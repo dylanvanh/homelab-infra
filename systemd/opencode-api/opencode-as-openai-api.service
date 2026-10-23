@@ -1,0 +1,21 @@
+[Unit]
+Description=Authenticated OpenAI-compatible gateway
+Wants=network-online.target opencode.service
+After=network-online.target opencode.service
+
+[Service]
+Type=simple
+User=opencode-api
+EnvironmentFile=/etc/opencode-as-openai-api.env
+WorkingDirectory=/opt/opencode-as-openai-api/current
+ExecStart=/opt/opencode-as-openai-api/node /opt/opencode-as-openai-api/current/node_modules/opencode-as-openai-api/dist/cli.js --upstream-url http://127.0.0.1:4096 --directory /srv/opencode-api --model openai/gpt-6-sol-fast --variant low --port 8787
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target

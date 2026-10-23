@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opencode-api
+spec:
+  ports:
+    - name: http
+      port: 8788
+      targetPort: 8788
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: opencode-api-pi
+  labels:
+    kubernetes.io/service-name: opencode-api
+    endpointslice.kubernetes.io/managed-by: homelab
+addressType: IPv4
+ports:
+  - name: http
+    protocol: TCP
+    port: 8788
+endpoints:
+  - addresses:
+      - 100.80.241.32
+    conditions:
+      ready: true

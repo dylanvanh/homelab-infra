@@ -1,0 +1,12 @@
+[Unit]
+Description=Forward the Pi Tailscale listener to the local gateway
+Requires=opencode-as-openai-api.service
+After=opencode-as-openai-api.service
+
+[Service]
+ExecStart=/lib/systemd/systemd-socket-proxyd 127.0.0.1:8787
+DynamicUser=true
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
