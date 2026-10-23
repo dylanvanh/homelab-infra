@@ -25,7 +25,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: pixel-pythons
-          image: ghcr.io/dylanvanh/pixel-pythons:security-20261023@sha256:c07416b3377fb84d9439729588cc4ad180c59954d63e54553c678b71506f136a
+          image: ghcr.io/dylanvanh/pixel-pythons:runtime-security-20261023@sha256:12aa52919fc6cd9cfeed99b71204a33804fb13bd5f96344914e877e44b9d6b8a
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
