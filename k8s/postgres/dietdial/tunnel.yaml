@@ -22,7 +22,8 @@ spec:
             app: cloudflared-dietdial
       containers:
       - name: cloudflared
-        image: cloudflare/cloudflared:2026.9.1
+        image: cloudflare/cloudflared:latest
+        imagePullPolicy: Always
         args:
         - tunnel
         - --no-autoupdate
