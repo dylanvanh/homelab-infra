@@ -152,6 +152,15 @@ kubectl apply -f k8s/<project>/
 find k8s -name "*.yaml" -not -name "helmfile.yaml" -exec kubectl apply -f {} \;
 ```
 
+**Roll out a new image:**
+
+My own projects run `:latest` with `imagePullPolicy: Always`, so applying the
+manifest does not restart them. Push the image, then restart the deployment:
+
+```bash
+kubectl rollout restart deployment/<name>
+```
+
 ## Helmfile (Monitoring Stack) quickstart
 
 ### Apply releases

@@ -26,8 +26,8 @@ spec:
         - name: ghcr-secret
       containers:
         - name: discord-opencode-bot
-          image: ghcr.io/dylanvanh/discord-opencode-bot:security-20261023@sha256:1d1a9f8047e912b75999f9bb81e1ddc0cdd9835d4c1e137e8a13c2ce27f657d5
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/dylanvanh/discord-opencode-bot:latest
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

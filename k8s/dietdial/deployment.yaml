@@ -16,10 +16,12 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: my-vps
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: dietdial-web
-          image: dietdial-web:latest
-          imagePullPolicy: Never
+          image: ghcr.io/dylanvanh/dietdial-web:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               name: http

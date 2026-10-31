@@ -25,8 +25,8 @@ spec:
         - name: ghcr-secret
       containers:
         - name: nuke
-          image: ghcr.io/dylanvanh/btc-transaction-nuke:security-20261023@sha256:3feeba254ee13e6514450e7cf646547aff5d59610827338af06c5a7ad0c01677
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/dylanvanh/btc-transaction-nuke:latest
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

@@ -26,8 +26,8 @@ spec:
         - name: ghcr-secret
       containers:
         - name: discord-gang-prompt-bot
-          image: ghcr.io/dylanvanh/discord-gang-prompt-bot:security-20261023@sha256:548747d53f1660aa8d1da5e658329844fc3f978f07926a76c2f08c412eaaaa66
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/dylanvanh/discord-gang-prompt-bot:latest
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
