@@ -20,7 +20,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: dietdial-web
-          image: ghcr.io/dylanvanh/dietdial-web:latest
+          image: ghcr.io/dylanvanh/dietdial-web:web-sol-20261106-233a60c@sha256:46514817cc076547e8bd162975949ca208b74ff7b40baa52cb191b0df318f08b
           imagePullPolicy: Always
           ports:
             - containerPort: 80
